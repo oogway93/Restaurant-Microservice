@@ -1,4 +1,4 @@
-package main 
+package main
 
 import (
 	"context"
@@ -17,14 +17,24 @@ func main() {
 	}
 	defer conn.Close()
 
-	c := pb.NewMyServiceClient(conn)
+	c := pb.NewRestaurantServiceClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	r, err := c.GetData(ctx, &pb.RequestData{Id: "123"})
+	res, err := c.CreateOrder(ctx, &pb.OrderRequest{
+		Title:  "GPU 5070 Super",
+		Price: 100000,
+	})
 	if err != nil {
-		log.Fatalf("could not get data: %v", err)
+		log.Fatalf("CreateOrder failed: %v", err)
 	}
-	log.Printf("Response: %s", r.GetValue())
+	log.Printf("Created Order: ID=%s, Title=%s", res.Id, res.Title)
+
+	// Get User
+	user, err := c.GetOrder(ctx, &pb.GetOrderRequest{Id: res.Id})
+	if err != nil {
+		log.Fatalf("GetOrder failed: %v", err)
+	}
+	log.Printf("Retrieved Order: %v", user)
 }

@@ -18,86 +18,122 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// MyServiceClient is the client API for MyService service.
+// RestaurantServiceClient is the client API for RestaurantService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type MyServiceClient interface {
-	GetData(ctx context.Context, in *RequestData, opts ...grpc.CallOption) (*ResponseData, error)
+type RestaurantServiceClient interface {
+	CreateOrder(ctx context.Context, in *OrderRequest, opts ...grpc.CallOption) (*OrderResponse, error)
+	GetOrder(ctx context.Context, in *GetOrderRequest, opts ...grpc.CallOption) (*OrderResponse, error)
 }
 
-type myServiceClient struct {
+type restaurantServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewMyServiceClient(cc grpc.ClientConnInterface) MyServiceClient {
-	return &myServiceClient{cc}
+func NewRestaurantServiceClient(cc grpc.ClientConnInterface) RestaurantServiceClient {
+	return &restaurantServiceClient{cc}
 }
 
-func (c *myServiceClient) GetData(ctx context.Context, in *RequestData, opts ...grpc.CallOption) (*ResponseData, error) {
-	out := new(ResponseData)
-	err := c.cc.Invoke(ctx, "/MyService/GetData", in, out, opts...)
+func (c *restaurantServiceClient) CreateOrder(ctx context.Context, in *OrderRequest, opts ...grpc.CallOption) (*OrderResponse, error) {
+	out := new(OrderResponse)
+	err := c.cc.Invoke(ctx, "/RestaurantService/CreateOrder", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// MyServiceServer is the server API for MyService service.
-// All implementations must embed UnimplementedMyServiceServer
+func (c *restaurantServiceClient) GetOrder(ctx context.Context, in *GetOrderRequest, opts ...grpc.CallOption) (*OrderResponse, error) {
+	out := new(OrderResponse)
+	err := c.cc.Invoke(ctx, "/RestaurantService/GetOrder", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// RestaurantServiceServer is the server API for RestaurantService service.
+// All implementations must embed UnimplementedRestaurantServiceServer
 // for forward compatibility
-type MyServiceServer interface {
-	GetData(context.Context, *RequestData) (*ResponseData, error)
-	mustEmbedUnimplementedMyServiceServer()
+type RestaurantServiceServer interface {
+	CreateOrder(context.Context, *OrderRequest) (*OrderResponse, error)
+	GetOrder(context.Context, *GetOrderRequest) (*OrderResponse, error)
+	mustEmbedUnimplementedRestaurantServiceServer()
 }
 
-// UnimplementedMyServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedMyServiceServer struct {
+// UnimplementedRestaurantServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedRestaurantServiceServer struct {
 }
 
-func (UnimplementedMyServiceServer) GetData(context.Context, *RequestData) (*ResponseData, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetData not implemented")
+func (UnimplementedRestaurantServiceServer) CreateOrder(context.Context, *OrderRequest) (*OrderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOrder not implemented")
 }
-func (UnimplementedMyServiceServer) mustEmbedUnimplementedMyServiceServer() {}
+func (UnimplementedRestaurantServiceServer) GetOrder(context.Context, *GetOrderRequest) (*OrderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOrder not implemented")
+}
+func (UnimplementedRestaurantServiceServer) mustEmbedUnimplementedRestaurantServiceServer() {}
 
-// UnsafeMyServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to MyServiceServer will
+// UnsafeRestaurantServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to RestaurantServiceServer will
 // result in compilation errors.
-type UnsafeMyServiceServer interface {
-	mustEmbedUnimplementedMyServiceServer()
+type UnsafeRestaurantServiceServer interface {
+	mustEmbedUnimplementedRestaurantServiceServer()
 }
 
-func RegisterMyServiceServer(s grpc.ServiceRegistrar, srv MyServiceServer) {
-	s.RegisterService(&MyService_ServiceDesc, srv)
+func RegisterRestaurantServiceServer(s grpc.ServiceRegistrar, srv RestaurantServiceServer) {
+	s.RegisterService(&RestaurantService_ServiceDesc, srv)
 }
 
-func _MyService_GetData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestData)
+func _RestaurantService_CreateOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrderRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MyServiceServer).GetData(ctx, in)
+		return srv.(RestaurantServiceServer).CreateOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/MyService/GetData",
+		FullMethod: "/RestaurantService/CreateOrder",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MyServiceServer).GetData(ctx, req.(*RequestData))
+		return srv.(RestaurantServiceServer).CreateOrder(ctx, req.(*OrderRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// MyService_ServiceDesc is the grpc.ServiceDesc for MyService service.
+func _RestaurantService_GetOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOrderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RestaurantServiceServer).GetOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/RestaurantService/GetOrder",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RestaurantServiceServer).GetOrder(ctx, req.(*GetOrderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// RestaurantService_ServiceDesc is the grpc.ServiceDesc for RestaurantService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var MyService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "MyService",
-	HandlerType: (*MyServiceServer)(nil),
+var RestaurantService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "RestaurantService",
+	HandlerType: (*RestaurantServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetData",
-			Handler:    _MyService_GetData_Handler,
+			MethodName: "CreateOrder",
+			Handler:    _RestaurantService_CreateOrder_Handler,
+		},
+		{
+			MethodName: "GetOrder",
+			Handler:    _RestaurantService_GetOrder_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
