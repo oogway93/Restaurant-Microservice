@@ -3,3 +3,4 @@ services:
     build: .
     ports:
       - "50051:50051"
+

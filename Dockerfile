@@ -14,8 +14,6 @@ RUN apk --no-cache add ca-certificates
 
 COPY --from=builder /server /server
 
-EXPOSE 50051
-
 RUN chmod +x ./server
 
 CMD ["/server"]
