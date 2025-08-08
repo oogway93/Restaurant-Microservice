@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option go_package = "./proto";
+
+service MyService {
+    rpc GetData(RequestData) returns (ResponseData) {}
+}
+
+message RequestData {
+    string Id = 1;
+}
+
+message ResponseData {
+    string Id = 1;
+    string Value = 2;
+}
